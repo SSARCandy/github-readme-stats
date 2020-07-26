@@ -64,12 +64,12 @@ describe("FetchTopLanguages", () => {
       HTML: {
         color: "#0f0",
         name: "HTML",
-        size: 200,
+        size: 2,
       },
       javascript: {
         color: "#0ff",
         name: "javascript",
-        size: 200,
+        size: 2,
       },
     });
   });
