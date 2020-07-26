@@ -68,6 +68,7 @@ const renderTopLanguages = (topLangs, options = {}) => {
     text_color,
     bg_color,
     hide,
+    hide_border,
     theme,
     layout,
   } = options;
@@ -180,7 +181,17 @@ const renderTopLanguages = (topLangs, options = {}) => {
         .header { font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${titleColor} }
         .lang-name { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${textColor} }
       </style>
-      <rect data-testid="card-bg" x="0.5" y="0.5" width="99.7%" height="99%" rx="4.5" fill="${bgColor}" stroke="#E4E2E2"/>
+      <rect
+        data-testid="card-bg"
+        x="0.5"
+        y="0.5"
+        width="99.7%"
+        height="99%"
+        rx="4.5"
+        fill="${bgColor}" 
+        stroke="#E4E2E2"
+        stroke-opacity="${hide_border ? 0 : 1}"
+      />
 
       ${
         hide_title
