@@ -44,37 +44,29 @@ async function fetchTopLanguages(username) {
 
   let repoNodes = res.data.data.user.repositories.nodes;
 
-  // TODO: perf improvement
-  repoNodes = repoNodes
-    .filter((node) => {
-      return node.languages.edges.length > 0;
-    })
-    .sort((a, b) => {
-      return b.languages.edges[0].size - a.languages.edges[0].size;
-    })
-    .map((node) => {
-      return node.languages.edges[0];
-    })
-    .reduce((acc, prev) => {
-      let langSize = prev.size;
-      if (acc[prev.node.name] && prev.node.name === acc[prev.node.name].name) {
-        langSize = prev.size + acc[prev.node.name].size;
-      }
-
-      return {
-        ...acc,
-        [prev.node.name]: {
-          name: prev.node.name,
-          color: prev.node.color,
-          size: langSize,
-        },
+  const langsMap = {};
+  for (const node of repoNodes) {
+    if (!node.languages.edges.length) continue;
+    const { name, color } = node.languages.edges[0].node;
+    if (!langsMap[name]) {
+      langsMap[name] = {
+        name,
+        color,
+        size: 1,
       };
-    }, {});
+      continue;
+    }
+    langsMap[name].size += 1;
+  }
 
-  const topLangs = Object.keys(repoNodes)
+  const langsRank = Object.keys(langsMap)
+    .map(k => langsMap[k])
+    .sort((a, b) => b.size - a.size);
+
+  const topLangs = langsRank
     .slice(0, 5)
-    .reduce((result, key) => {
-      result[key] = repoNodes[key];
+    .reduce((result, { name }) => {
+      result[name] = langsMap[name];
       return result;
     }, {});
 
