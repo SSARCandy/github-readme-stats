@@ -70,6 +70,7 @@ const renderTopLanguages = (topLangs, options = {}) => {
     text_color,
     bg_color,
     hide,
+    hide_border,
     theme,
     layout,
   } = options;
