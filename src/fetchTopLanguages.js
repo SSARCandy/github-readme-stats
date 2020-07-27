@@ -65,7 +65,7 @@ async function fetchTopLanguages(username) {
     .sort((a, b) => b.size - a.size);
 
   const topLangs = langsRank
-    .slice(0, 5)
+    .slice(0, 10)
     .reduce((result, { name }) => {
       result[name] = langsMap[name];
       return result;

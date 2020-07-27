@@ -33,6 +33,21 @@ const fetcher = (variables, token) => {
               stargazers {
                 totalCount
               }
+              refs(first: 1, refPrefix: "refs/heads/", query: "master") {
+                edges {
+                  node {
+                    name
+                    target {
+                      id
+                      ... on Commit {
+                        history(first: 0) {
+                          totalCount
+                        }
+                      }
+                    }
+                  }
+                }
+              }      
             }
           }
         }
@@ -72,10 +87,11 @@ async function fetchStats(username, count_private = false) {
   stats.name = user.name || user.login;
   stats.totalIssues = user.issues.totalCount;
 
-  stats.totalCommits = contributionCount.totalCommitContributions;
+  stats.totalCommits = user.repositories.nodes.reduce((prev, curr) => {
+    return prev + curr.refs.edges[0].node.target.history.totalCount;
+  }, 0);
   if (count_private) {
-    stats.totalCommits =
-      contributionCount.totalCommitContributions +
+    stats.totalCommits +=
       contributionCount.restrictedContributionsCount;
   }
 
