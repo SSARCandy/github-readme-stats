@@ -11,14 +11,10 @@ const fetcher = (variables, token) => {
           # fetch only owner repos & not forks
           repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
             nodes {
-              languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
-                edges {
-                  size
-                  node {
-                    color
-                    name
-                  }
-                }
+              name
+              primaryLanguage {
+                name
+                color
               }
             }
           }
@@ -43,12 +39,12 @@ async function fetchTopLanguages(username) {
     throw Error(res.data.errors[0].message || "Could not fetch user");
   }
 
-  let repoNodes = res.data.data.user.repositories.nodes;
+  const { nodes } = res.data.data.user.repositories;
 
   const langsMap = {};
-  for (const node of repoNodes) {
-    if (!node.languages.edges.length) continue;
-    const { name, color } = node.languages.edges[0].node;
+  for (const node of nodes) {
+    if (!node.primaryLanguage) continue;
+    const { name, color } = node.primaryLanguage;
     if (!langsMap[name]) {
       langsMap[name] = {
         name,
@@ -59,6 +55,7 @@ async function fetchTopLanguages(username) {
     }
     langsMap[name].size += 1;
   }
+  console.log(langsMap)
 
   const langsRank = Object.keys(langsMap)
     .map(k => langsMap[k])
